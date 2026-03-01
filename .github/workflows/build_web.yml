@@ -1,0 +1,33 @@
+name: Build Web
+
+on:
+  push:
+    branches: [ "main", "yaner-here-web-release" ]
+  pull_request:
+    branches: [ "main", "yaner-here-web-release" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Run build_runner
+      run: dart run build_runner build --delete-conflicting-outputs
+
+    - name: Build Web
+      run: flutter build web --release
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: web-release
+        path: build/web/
